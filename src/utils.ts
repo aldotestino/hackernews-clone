@@ -21,22 +21,17 @@ function getTokenPayLoad(token: string): Payload {
   return jwt.verify(token, APP_SECRET) as Payload;
 }
 
-function getUserId(req: Request | null, authToken?: string): number {
-  if(req) {
-    const authHeader = req.headers?.authorization;
-    if (authHeader) {
-      const token = authHeader.replace('Bearer ', '');
-      if (!token) {
-        throw new Error('No token found');
-      }
-      const { userId } = getTokenPayLoad(token);
-      return userId;
+function getUserId(req: Request): number | null {
+  const authHeader = req.headers?.authorization;
+  if (authHeader) {
+    const token = authHeader.replace('Bearer ', '');
+    if (!token) {
+      throw new Error('No token found');
     }
-  } else if(authToken) {
-    const { userId } = getTokenPayLoad(authToken);
+    const { userId } = getTokenPayLoad(token);
     return userId;
   }
-  throw new Error('Not authenticated');
+  return null;
 }
 
 export {

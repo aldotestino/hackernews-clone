@@ -1,12 +1,11 @@
 ## hackernews clone
 
 ### Stack
-* Server
-  * Typescript
-  * Graphql
-  * Apollo-server
-  * Prisma
-  * Sqlite
+* Typescript
+* Graphql
+* Apollo-server
+* Prisma
+* Sqlite
 
 ### Configuration
 * Install all the dependencies
@@ -103,7 +102,7 @@
       "Authorization": "Bearer YOUR_TOKEN"
     }
     ```
-* Delete a Link
+* Vote a Link
   ```graphql
   mutation {
     vote(linkId: "3") {
@@ -203,6 +202,12 @@
     }
   }
   ```
+  * Headers
+    ```graphql   
+    {
+      "Authorization": "Bearer YOUR_TOKEN"
+    }
+    ```
 * Subscribe to new votes
   ```graphql
   subscription newVote {
@@ -221,3 +226,9 @@
     }
   }
   ```
+  * Headers
+    ```graphql   
+    {
+      "Authorization": "Bearer YOUR_TOKEN"
+    }
+    ```
