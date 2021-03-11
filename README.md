@@ -193,12 +193,14 @@
 #### Subscription
 * Subscribe to new links
   ```graphql
-  subscription newLink {
-    id
-    url
-    description
-    postedBy {
-      name
+  subscription {
+    newLink {
+      id
+      url
+      description
+      postedBy {
+        name
+      }
     }
   }
   ```
@@ -210,19 +212,21 @@
     ```
 * Subscribe to new votes
   ```graphql
-  subscription newVote {
-    id
-    link {
+  subscription {
+    newVote {
       id
-      url
-      description
-      postedBy {
+      link {
+        id
+        url
+        description
+        postedBy {
+          name
+        }
+      }
+      user {
+        id
         name
       }
-    }
-    user {
-      id
-      name
     }
   }
   ```
