@@ -58,7 +58,7 @@ const changeName: ResolverFunc<User> = (_, { name }, { prisma, userId }) => {
 };
 
 const post: ResolverFunc<Link> = async (_, { url, description }, { prisma, pubsub, userId }) => {
-  if(!userId) { 
+  if(!userId) {
     throw new Error('You have to be logged in to post a link');
   }
 
@@ -83,21 +83,27 @@ const deleteLink: ResolverFunc<Link> = async (_, { id }, { prisma, userId }) => 
     throw new Error('You have to be logged in to delete a link');
   }
 
-  const userIdOfLink = await prisma.link.findUnique({
-    where: {
-      id: Number(id)
-    }
-  }).postedBy().then(u => u?.id);
-
-  if(userIdOfLink !== userId) {
-    throw new Error('You have to be the owner of the link to delete it');
-  }
-
-  return prisma.link.delete({
+  const linkToDelete = await prisma.link.findUnique({
     where: {
       id: Number(id)
     }
   });
+
+  if(!linkToDelete) {
+    throw new Error(`Link with id ${id} doesn't exist`);
+  }
+
+  if(linkToDelete.postedById !== userId) {
+    throw new Error('You have to be the owner of the link to delete it');
+  }
+
+  await prisma.link.delete({
+    where: {
+      id: Number(id)
+    }
+  });
+
+  return linkToDelete;
 };
 
 const vote: ResolverFunc<Vote> = async (_, { linkId }, { userId, prisma, pubsub }) => {
@@ -105,13 +111,17 @@ const vote: ResolverFunc<Vote> = async (_, { linkId }, { userId, prisma, pubsub 
     throw new Error('You have to be logged in to vote');
   }
 
-  const userIdOfLink = await prisma.link.findUnique({
+  const linkToVote = await prisma.link.findUnique({
     where: {
       id: Number(linkId)
     }
-  }).postedBy().then(u => u?.id);
+  });
 
-  if(userIdOfLink === userId) {
+  if(!linkToVote) {
+    throw new Error(`Link with id ${linkId} doesn't exist`);
+  }
+
+  if(linkToVote.postedById === userId) {
     throw new Error('You can\'t vote your own link');
   }
 
